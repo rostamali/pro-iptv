@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@import 'tailwindcss';
+
+@theme {
+    --color-primary: #3b82f6;
+    --color-secondary: #f97316;
+    --color-white: #ffffff;
+
+    --color-primary-bg: #000209;
+
+    --color-card-bg: #070b15;
+    --color-card-border: #1e1b39;
+
+    --color-secondary-btn-bg: #ffffff14;
+    --color-secondary-btn-border: #ffffff0f;
+
+    --color-gradient-primary: #834ef9;
+    --color-gradient-secondary: #421ad9;
+
+    --font-heading: 'Poppins', sans-serif;
+    --font-body: 'Poppins', sans-serif;
+}
+
+@utility container {
+    max-width: 1200px;
+    margin: auto;
+}
+@keyframes wave {
+    0%,
+    100% {
+        transform: scaleY(0.5);
+    }
+    50% {
+        transform: scaleY(1.2);
+    }
+}
+
+/* Hide native video controls completely (Webkit/Chrome/Safari) */
+/* video::-webkit-media-controls,
+video::-webkit-media-controls-enclosure,
+video::-webkit-media-controls-panel {
+    display: none !important;
+    -webkit-appearance: none;
+}
+video::-moz-media-controls {
+    display: none !important;
+}
+
+@utility channel-card {
+    @apply bg-card-bg border border-card-border rounded-[14px] cursor-pointer;
+} */
+
+@layer components {
+    .player-wrapper {
+        @apply bg-card-bg border border-card-border xl:rounded-[20px] md:rounded-[12px] rounded-[8px] overflow-hidden p-[5px];
+    }
+    .player-controller__btn {
+        @apply bg-secondary-btn-bg border border-secondary-btn-border rounded-[8px] flex items-center justify-center text-white fill-white cursor-pointer;
+    }
+    .player-controller-play__btn {
+        @apply rounded-[50%] flex items-center justify-center text-white fill-white cursor-pointer md:h-[54px] md:w-[54px] h-[45px] w-[45px] bg-gradient-to-r from-gradient-primary to-gradient-secondary border border-gradient-primary;
+    }
+    .player-controller-prev-next__btn {
+        @apply bg-secondary-btn-bg border border-secondary-btn-border md:rounded-[8px] rounded-[4px] flex items-center justify-center text-white fill-white cursor-pointer md:h-[40px] md:w-[40px] w-[32px] h-[32px];
+    }
+    .player-controller-sm__btn {
+        @apply bg-secondary-btn-bg border border-secondary-btn-border rounded-[8px] flex items-center justify-center text-white fill-white cursor-pointer h-[32px] w-[32px];
+    }
+    .channel-card {
+        @apply bg-card-bg rounded-[10px] cursor-pointer relative overflow-hidden transition-all duration-300 font-body border;
+    }
+    .category-tab {
+        @apply text-[15px] font-normal whitespace-nowrap px-[15px] py-[8px] font-body cursor-pointer text-white rounded-[8px];
+    }
+
+    .active-channel {
+        @apply absolute top-2 left-1/2 -translate-x-1/2 z-10 bg-gradient-to-r from-gradient-primary to-gradient-secondary text-[12px] font-light flex items-center justify-center gap-1.5 py-[7px] rounded-[6px] text-white w-[106px];
+    }
+    .channel-category__badge {
+        @apply bg-[#e8332acc] uppercase text-[10px] font-normal text-white px-[5.5px] py-[3px] rounded-[3px] tracking-[1px];
+    }
+}
