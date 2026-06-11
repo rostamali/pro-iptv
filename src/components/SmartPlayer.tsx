@@ -243,12 +243,16 @@ export default function SmartPlayer({
                 ref={containerRef}
                 className={`relative bg-black ${
                     isFullscreen
-                        ? 'fixed inset-0 w-screen h-screen' // ✅ fixed positioning + viewport units
+                        ? 'fixed inset-0 z-[9999] !rounded-none'
                         : 'xl:rounded-[18px] md:rounded-[12px] rounded-[8px] overflow-hidden aspect-video'
                 }`}
                 style={
                     isFullscreen
-                        ? { height: '100dvh', width: '100vw' } // ✅ dvh handles mobile address bar
+                        ? {
+                              width: '100vw',
+                              height: '100vh',
+                              minHeight: '100dvh',
+                          }
                         : undefined
                 }
                 onMouseMove={
@@ -265,7 +269,9 @@ export default function SmartPlayer({
                     disablePictureInPicture
                     onClick={handleVideoClick}
                     className="w-full h-full cursor-pointer"
-                    style={{ objectFit: isFullscreen ? fillMode : 'cover' }}
+                    style={{
+                        objectFit: isFullscreen ? fillMode : 'cover',
+                    }}
                 />
 
                 {loading && (
@@ -306,6 +312,7 @@ export default function SmartPlayer({
                             volume={volume}
                             fillMode={fillMode}
                             toggleFillMode={toggleFillMode}
+                            isFullscreen={isFullscreen}
                         />
                     </div>
                 )}
@@ -326,6 +333,7 @@ export default function SmartPlayer({
                     volume={volume}
                     fillMode={fillMode}
                     toggleFillMode={toggleFillMode}
+                    isFullscreen={isFullscreen}
                 />
             )}
         </div>
