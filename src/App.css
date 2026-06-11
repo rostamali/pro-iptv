@@ -4,6 +4,23 @@ body,
 html {
     padding: 0;
     margin: 0;
-    font-family: 'Barlow', sans-serif;
     box-sizing: border-box;
+}
+
+.circle_inner {
+    position: relative;
+    height: 100%;
+}
+.circle_inner:before {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 0 10px 20px;
+    border-color: transparent transparent transparent #ffffff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -7px;
 }

@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import Hls from 'hls.js';
 import { usePlayChannel } from '../hooks/usePlayChannel';
 import { useAutoHideControls } from '../hooks/useAutoHideControls';
 import { useFullscreen } from '../hooks/useFullscreen';
 import { proxyStream } from '../utils/proxy';
+import { isTouchDevice } from '../utils/device';
 import { loadVolume, saveVolume, loadMuted, saveMuted } from '../utils/storage';
 import type { Channel } from '../types';
 import PlayerController from './PlayerController';
@@ -28,6 +29,9 @@ export default function SmartPlayer({
     const hlsRef = useRef<Hls | null>(null);
     const wasFullscreenRef = useRef(false);
 
+    // ✅ Detect touch device once
+    const isTouch = useMemo(() => isTouchDevice(), []);
+
     const [loading, setLoading] = useState(true);
     const [isPlaying, setIsPlaying] = useState(false);
     const [volume, setVolume] = useState(() => loadVolume());
@@ -38,6 +42,7 @@ export default function SmartPlayer({
     const {
         visible: controlsVisible,
         show: showControls,
+        toggle: toggleControls, // ✅ NEW
         lock,
         unlock,
     } = useAutoHideControls(3000);
@@ -45,17 +50,17 @@ export default function SmartPlayer({
     const { source, failed, markFailed, reset, hasWorkingSource } =
         usePlayChannel(channel.source);
 
+    // ... [keep all your existing useEffects unchanged] ...
+
     // Track fullscreen state for safety net
     useEffect(() => {
         wasFullscreenRef.current = isFullscreen;
     }, [isFullscreen]);
 
-    // Reset stream sources when channel changes
     useEffect(() => {
         reset();
     }, [channel.id, reset]);
 
-    // Re-enter fullscreen if browser dropped it during channel change
     useEffect(() => {
         if (
             wasFullscreenRef.current &&
@@ -71,7 +76,7 @@ export default function SmartPlayer({
         }
     }, [channel.id]);
 
-    // Stream loading with smooth HLS handover
+    // ... [stream loading effect unchanged] ...
     useEffect(() => {
         const video = videoRef.current;
         if (!video || failed) return;
@@ -144,14 +149,12 @@ export default function SmartPlayer({
         };
     }, [source, failed, markFailed, channel.name]);
 
-    // Cleanup HLS on full unmount
     useEffect(() => {
         return () => {
             hlsRef.current?.destroy();
         };
     }, []);
 
-    // Sync volume/muted to video element
     useEffect(() => {
         const video = videoRef.current;
         if (!video) return;
@@ -175,9 +178,16 @@ export default function SmartPlayer({
 
     const toggleMute = () => setMuted((m) => !m);
 
+    // ✅ FIX: Different behavior for touch vs mouse devices
     const handleVideoClick = () => {
         if (isFullscreen) {
-            showControls();
+            if (isTouch) {
+                // Touch: tap toggles controls visibility
+                toggleControls();
+            } else {
+                // Desktop: click shows controls (auto-hides after 3s)
+                showControls();
+            }
         } else {
             togglePlayPause();
         }
@@ -230,7 +240,10 @@ export default function SmartPlayer({
                         ? 'w-screen h-screen'
                         : 'xl:rounded-[18px] md:rounded-[12px] rounded-[8px] overflow-hidden aspect-video'
                 }`}
-                onMouseMove={isFullscreen ? showControls : undefined}
+                // ✅ FIX: Only use mouseMove on non-touch devices
+                onMouseMove={
+                    isFullscreen && !isTouch ? showControls : undefined
+                }
             >
                 <video
                     ref={videoRef}
@@ -253,13 +266,16 @@ export default function SmartPlayer({
 
                 {isFullscreen && (
                     <div
-                        onMouseEnter={lock}
-                        onMouseLeave={unlock}
+                        // ✅ FIX: Only use mouse-based lock/unlock on desktop
+                        onMouseEnter={!isTouch ? lock : undefined}
+                        onMouseLeave={!isTouch ? unlock : undefined}
+                        // ✅ FIX: Stop propagation so tapping controls doesn't toggle visibility
+                        onClick={(e) => e.stopPropagation()}
                         className={`player-controller__overlay transition-opacity duration-300 z-20 ${
                             controlsVisible
                                 ? 'opacity-100'
                                 : 'opacity-0 pointer-events-none'
-                        } `}
+                        }`}
                     >
                         <PlayerController
                             toggleFullscreen={toggleFullscreen}

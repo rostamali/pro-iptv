@@ -67,20 +67,14 @@ export default function PlayerController({
                     >
                         {isPlaying ? (
                             <svg
-                                className="w-7 h-7"
+                                className="md:w-6 md:h-6 w-4.5 h-4.5"
                                 fill="currentColor"
                                 viewBox="0 0 24 24"
                             >
                                 <path d="M6 4h4v16H6zM14 4h4v16h-4z" />
                             </svg>
                         ) : (
-                            <svg
-                                className="w-7 h-7 ml-1"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path d="M8 5v14l11-7z" />
-                            </svg>
+                            <div className="play-icon"></div>
                         )}
                     </button>
 

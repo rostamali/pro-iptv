@@ -6,6 +6,7 @@ import SmartPlayer from './components/SmartPlayer';
 import { saveLastChannel, loadLastChannel } from './utils/storage';
 import type { ChannelCategory } from './types';
 import Header from './components/Header';
+import './App.css';
 
 export default function App() {
     const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -87,7 +88,7 @@ export default function App() {
                                 <div className="xl:px-[0px] px-[20px]">
                                     <div className="mb-3 flex items-baseline justify-between font-heading">
                                         <div>
-                                            <h2 className="text-white text-[23px] font-normal">
+                                            <h2 className="text-white text-[18px] font-medium tracking-wide">
                                                 {selected.name}
                                             </h2>
                                         </div>
@@ -109,7 +110,7 @@ export default function App() {
                     )}
                     <section className="channel-list">
                         <div className="container">
-                            <div className="pt-[20px]xl:px-[0px] px-[20px] flex flex-col gap-5">
+                            <div className="pt-[20px] xl:px-[0px] px-[20px] flex flex-col gap-5">
                                 <CategoryTabs
                                     active={activeCategory}
                                     onChange={setActiveCategory}

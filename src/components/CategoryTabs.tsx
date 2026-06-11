@@ -30,7 +30,6 @@ export default function CategoryTabs({ active, onChange }: Props) {
                             : 'bg-card-bg border border-card-border'
                     }`}
                 >
-                    {/* <span className="mr-1.5">{tab.emoji}</span> */}
                     {tab.label}
                 </button>
             ))}
