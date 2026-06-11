@@ -4,13 +4,13 @@ import CategoryTabs from './components/CategoryTabs';
 import ChannelCard from './components/ChannelCard';
 import SmartPlayer from './components/SmartPlayer';
 import { saveLastChannel, loadLastChannel } from './utils/storage';
+import type { ChannelCategory } from './types';
 import Header from './components/Header';
 
 export default function App() {
     const [activeCategory, setActiveCategory] = useState<string>('all');
     const [search, setSearch] = useState('');
 
-    // ✅ FIX: Lazy initializer — runs ONCE during initial render, no cascading effect
     const [selectedId, setSelectedId] = useState<string | null>(() => {
         const savedId = loadLastChannel();
         const savedExists = savedId && CHANNELS.some((c) => c.id === savedId);
@@ -18,7 +18,6 @@ export default function App() {
         return CHANNELS.length > 0 ? CHANNELS[0].id : null;
     });
 
-    // ✅ Save when channel changes (this is fine — only runs on change, not on mount cascade)
     useEffect(() => {
         if (selectedId) saveLastChannel(selectedId);
     }, [selectedId]);
@@ -26,7 +25,9 @@ export default function App() {
     const filteredChannels = useMemo(() => {
         let list = CHANNELS;
         if (activeCategory !== 'all') {
-            list = list.filter((c) => c.category === activeCategory);
+            list = list.filter((c) =>
+                c.categories.includes(activeCategory as ChannelCategory),
+            );
         }
         if (search) {
             const q = search.toLowerCase();
@@ -78,22 +79,19 @@ export default function App() {
     return (
         <>
             <main>
-                <div className="bg-primary-bg min-h-screen">
+                <div className="bg-primary-bg min-h-screen py-[60px]">
                     <Header search={search} setSearch={setSearch} />
                     {selected && (
                         <section className="iptv-player">
                             <div className="container">
                                 <div className="xl:px-[0px] px-[20px]">
-                                    <div className="mb-3 flex items-baseline justify-between">
+                                    <div className="mb-3 flex items-baseline justify-between font-heading">
                                         <div>
-                                            <h2 className="text-2xl font-bold">
+                                            <h2 className="text-white text-[23px] font-normal">
                                                 {selected.name}
                                             </h2>
-                                            <p className="text-sm text-gray-400">
-                                                {selected.description}
-                                            </p>
                                         </div>
-                                        <div className="text-xs text-gray-500">
+                                        <div className="text-[14px] font-medium text-gray-500">
                                             {currentIndex + 1} /{' '}
                                             {filteredChannels.length}
                                         </div>
@@ -111,7 +109,7 @@ export default function App() {
                     )}
                     <section className="channel-list">
                         <div className="container">
-                            <div className="pt-[20px] pb-[60px] xl:px-[0px] px-[20px] flex flex-col gap-5">
+                            <div className="pt-[20px]xl:px-[0px] px-[20px] flex flex-col gap-5">
                                 <CategoryTabs
                                     active={activeCategory}
                                     onChange={setActiveCategory}

@@ -225,7 +225,7 @@ export default function SmartPlayer({
         <div className="player-wrapper">
             <div
                 ref={containerRef}
-                className={`relative  ${
+                className={`relative bg-black ${
                     isFullscreen
                         ? 'w-screen h-screen'
                         : 'xl:rounded-[18px] md:rounded-[12px] rounded-[8px] overflow-hidden aspect-video'
@@ -241,29 +241,13 @@ export default function SmartPlayer({
                 />
 
                 {loading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 pointer-events-none z-20">
+                    <div className="absolute inset-0 flex items-center justify-center bg-black pointer-events-none z-20">
                         <div className="text-center">
-                            <div className="animate-spin h-12 w-12 border-4 border-white border-t-transparent rounded-full mx-auto mb-2" />
-                            <p className="text-white text-sm">
-                                Loading {source.label}...
+                            <div className="animate-spin lg:h-[30px] lg:w-[30px] h-[25px] w-[25px] border-3 border-white border-t-gradient-primary rounded-full mx-auto mb-2" />
+                            <p className="text-white uppercase font-heading text-[12px] font-normal tracking-wider">
+                                Connecting stream...
                             </p>
                         </div>
-                    </div>
-                )}
-
-                <div className="absolute top-3 right-3 bg-red-600 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1.5 z-10">
-                    <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                    LIVE · {source?.quality}
-                </div>
-
-                {isFullscreen && controlsVisible && (
-                    <div className="absolute top-4 left-4 z-30 text-white">
-                        <h2 className="text-2xl font-bold drop-shadow-lg">
-                            {channel.name}
-                        </h2>
-                        <p className="text-sm text-gray-300 drop-shadow-lg">
-                            {channel.country} · {source?.label}
-                        </p>
                     </div>
                 )}
 
@@ -271,11 +255,11 @@ export default function SmartPlayer({
                     <div
                         onMouseEnter={lock}
                         onMouseLeave={unlock}
-                        className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-6 transition-opacity duration-300 z-20 ${
+                        className={`player-controller__overlay transition-opacity duration-300 z-20 ${
                             controlsVisible
                                 ? 'opacity-100'
                                 : 'opacity-0 pointer-events-none'
-                        }`}
+                        } `}
                     >
                         <PlayerController
                             toggleFullscreen={toggleFullscreen}

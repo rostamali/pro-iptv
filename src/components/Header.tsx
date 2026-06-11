@@ -5,7 +5,7 @@ type props = {
 export default function Header({ search, setSearch }: props) {
     return (
         <>
-            <header className="bg-black/50 backdrop-blur border-b border-white/10 p-4 sticky top-0 z-30">
+            <header className="bg-black/50 backdrop-blur border-b border-white/10 p-4 sticky top-0 z-30 hidden">
                 <div className="flex items-center justify-between max-w-7xl mx-auto">
                     <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                         🎬 MyStreamZ

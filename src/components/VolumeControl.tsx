@@ -50,13 +50,13 @@ export default function VolumeControl({
             <div
                 className={`flex items-center overflow-hidden transition-all duration-300 w-28 opacity-100`}
             >
-                <div className="relative h-1.5 bg-white/20 rounded-full w-24 cursor-pointer">
+                <div className="volumn-slider">
                     <div
-                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-400 to-pink-400 rounded-full pointer-events-none"
+                        className="absolute top-0 left-0 h-full transparent pointer-events-none"
                         style={{ width: `${percent}%` }}
                     />
                     <div
-                        className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md pointer-events-none"
+                        className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white shadow-md pointer-events-none"
                         style={{ left: `calc(${percent}% - 6px)` }}
                     />
                     <input

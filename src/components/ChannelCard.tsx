@@ -14,11 +14,11 @@ export default function ChannelCard({ channel, onClick, isActive }: Props) {
             disabled={isActive}
         >
             <div className="channel-meta flex justify-between p-[10px] absolute w-full">
-                {channel.category && (
+                {/* {channel.categories && (
                     <div className="channel-category__badge">
                         {channel.category}
                     </div>
-                )}
+                )} */}
                 {channel.isLive && (
                     <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></div>
                 )}
@@ -35,19 +35,17 @@ export default function ChannelCard({ channel, onClick, isActive }: Props) {
                 )}
             </div>
 
-            {isActive && (
-                <div className="active-channel">
-                    <span className="flex gap-0.5 items-end h-3">
-                        <span className="w-0.5 bg-white animate-[wave_1s_ease-in-out_infinite] h-2" />
-                        <span className="w-0.5 bg-white animate-[wave_1s_ease-in-out_0.2s_infinite] h-3" />
-                        <span className="w-0.5 bg-white animate-[wave_1s_ease-in-out_0.4s_infinite] h-1.5" />
-                    </span>
-                    Now Playing
-                </div>
-            )}
-            <div
-                className="bg-primary-bg p-3"
-            >
+            <div className="bg-primary-bg px-3 pt-5 pb-3 relative">
+                {isActive && (
+                    <div className="active-channel">
+                        <span className="flex gap-0.5 items-end h-3">
+                            <span className="w-0.5 bg-white animate-[wave_1s_ease-in-out_infinite] h-2" />
+                            <span className="w-0.5 bg-white animate-[wave_1s_ease-in-out_0.2s_infinite] h-3" />
+                            <span className="w-0.5 bg-white animate-[wave_1s_ease-in-out_0.4s_infinite] h-1.5" />
+                        </span>
+                        Now Playing
+                    </div>
+                )}
                 <h3 className="text-[15px] text-white font-normal line-clamp-1">
                     {channel.name}
                 </h3>

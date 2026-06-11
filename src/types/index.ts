@@ -10,7 +10,7 @@ export interface Channel {
     id: string;
     name: string;
     logo: string;
-    category: ChannelCategory;
+    categories: ChannelCategory[];
     country: string;
     language: string;
     description?: string;
@@ -29,4 +29,5 @@ export type ChannelCategory =
     | 'kids'
     | 'music'
     | 'religious'
-    | 'general';
+    | 'general'
+    | 'worldcup';

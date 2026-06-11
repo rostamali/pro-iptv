@@ -56,16 +56,16 @@ video::-moz-media-controls {
         @apply bg-card-bg border border-card-border xl:rounded-[20px] md:rounded-[12px] rounded-[8px] overflow-hidden p-[5px];
     }
     .player-controller__btn {
-        @apply bg-secondary-btn-bg border border-secondary-btn-border rounded-[8px] flex items-center justify-center text-white fill-white cursor-pointer;
+        @apply bg-secondary-btn-bg border border-secondary-btn-border rounded-[8px] flex items-center justify-center text-white fill-white cursor-pointer backdrop-blur-[12px];
     }
     .player-controller-play__btn {
         @apply rounded-[50%] flex items-center justify-center text-white fill-white cursor-pointer md:h-[54px] md:w-[54px] h-[45px] w-[45px] bg-gradient-to-r from-gradient-primary to-gradient-secondary border border-gradient-primary;
     }
     .player-controller-prev-next__btn {
-        @apply bg-secondary-btn-bg border border-secondary-btn-border md:rounded-[8px] rounded-[4px] flex items-center justify-center text-white fill-white cursor-pointer md:h-[40px] md:w-[40px] w-[32px] h-[32px];
+        @apply bg-secondary-btn-bg border border-secondary-btn-border md:rounded-[8px] rounded-[4px] flex items-center justify-center text-white fill-white cursor-pointer md:h-[40px] md:w-[40px] w-[32px] h-[32px] backdrop-blur-[12px];
     }
     .player-controller-sm__btn {
-        @apply bg-secondary-btn-bg border border-secondary-btn-border rounded-[8px] flex items-center justify-center text-white fill-white cursor-pointer h-[32px] w-[32px];
+        @apply bg-secondary-btn-bg border border-secondary-btn-border rounded-[8px] flex items-center justify-center text-white fill-white cursor-pointer h-[32px] w-[32px] backdrop-blur-[12px];
     }
     .channel-card {
         @apply bg-card-bg rounded-[10px] cursor-pointer relative overflow-hidden transition-all duration-300 font-body border;
@@ -75,9 +75,16 @@ video::-moz-media-controls {
     }
 
     .active-channel {
-        @apply absolute top-2 left-1/2 -translate-x-1/2 z-10 bg-gradient-to-r from-gradient-primary to-gradient-secondary text-[12px] font-light flex items-center justify-center gap-1.5 py-[7px] rounded-[6px] text-white w-[106px];
+        @apply absolute top-[-12px] left-1/2 -translate-x-1/2 z-10 bg-gradient-to-r from-gradient-primary to-gradient-secondary text-[10px] font-light flex items-center justify-center gap-1.5 py-[4px] rounded-[4px] text-white w-[100px] uppercase tracking-wider;
     }
     .channel-category__badge {
-        @apply bg-[#e8332acc] uppercase text-[10px] font-normal text-white px-[5.5px] py-[3px] rounded-[3px] tracking-[1px];
+        @apply bg-[#e8332acc] uppercase text-[8px] font-normal text-white px-[4px] py-[3px] rounded-[2px] tracking-[1px];
+    }
+
+    .volumn-slider {
+        @apply relative h-1 w-[72px] bg-secondary-btn-bg cursor-pointer;
+    }
+    .player-controller__overlay{
+        @apply absolute w-full inset-x-0 bottom-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.92)_0%,rgba(0,0,0,0.25)_35%,transparent_60%)]
     }
 }

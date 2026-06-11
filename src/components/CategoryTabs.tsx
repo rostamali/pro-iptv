@@ -1,13 +1,15 @@
 import type { ChannelCategory } from '../types';
 
-const TABS: { id: ChannelCategory | 'all'; label: string; emoji: string }[] = [
-    { id: 'all', label: 'All', emoji: '📺' },
-    { id: 'sports', label: 'Sports', emoji: '⚽' },
-    { id: 'general', label: 'General', emoji: '🎭' },
-    { id: 'documentary', label: 'Documentary', emoji: '🎬' },
-    { id: 'news', label: 'News', emoji: '📰' },
-    { id: 'movies', label: 'Movies', emoji: '🎥' },
-    { id: 'kids', label: 'Kids', emoji: '🧒' },
+const TABS: { id: ChannelCategory | 'all'; label: string }[] = [
+    { id: 'all', label: 'All' },
+    { id: 'sports', label: 'Sports' },
+    { id: 'general', label: 'General' },
+    { id: 'documentary', label: 'Documentary' },
+    { id: 'news', label: 'News' },
+    { id: 'movies', label: 'Movies' },
+    { id: 'kids', label: 'Kids' },
+    { id: 'worldcup', label: 'World Cup' },
+    { id: 'religious', label: 'Religious' },
 ];
 
 interface Props {

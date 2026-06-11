@@ -29,7 +29,7 @@ export default function PlayerController({
     return (
         <>
             <div className="grid md:grid-cols-3 grid-cols-2 items-center xl:py-[30px] xl:px-[45px] py-[15px] px-[10px] gap-4">
-                <div className="order-1">
+                <div className="md:order-1 order-2">
                     <VolumeControl
                         volume={volume}
                         muted={muted}
@@ -38,7 +38,7 @@ export default function PlayerController({
                     />
                 </div>
 
-                <div className="md:order-2 order-3 md:col-span-1 col-span-2 flex items-center gap-[20px] justify-center">
+                <div className="md:order-2 order-1 md:col-span-1 col-span-2 flex items-center gap-[20px] justify-center">
                     <button
                         onClick={onPrevChannel}
                         disabled={!hasPrev}
@@ -54,6 +54,7 @@ export default function PlayerController({
                             stroke-width="2.2"
                             viewBox="0 0 24 24"
                             width="18"
+                            className="lg:h-[18px] lg:w-[18px] w-[14px] h-[14px]"
                         >
                             <polygon points="19 20 9 12 19 4 19 20"></polygon>
                             <line x1="5" x2="5" y1="19" y2="5"></line>
@@ -98,6 +99,7 @@ export default function PlayerController({
                             stroke-width="2.2"
                             viewBox="0 0 24 24"
                             width="18"
+                            className="lg:h-[18px] lg:w-[18px] w-[14px] h-[14px]"
                         >
                             <polygon points="5 4 15 12 5 20 5 4"></polygon>
                             <line x1="19" x2="19" y1="5" y2="19"></line>
