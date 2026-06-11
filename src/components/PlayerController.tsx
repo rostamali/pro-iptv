@@ -12,6 +12,8 @@ type props = {
     hasNext: boolean;
     muted: boolean;
     volume: number;
+    fillMode: 'contain' | 'cover';
+    toggleFillMode: () => void;
 };
 export default function PlayerController({
     toggleMute,

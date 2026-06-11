@@ -37,20 +37,70 @@
 }
 
 /* Hide native video controls completely (Webkit/Chrome/Safari) */
-/* video::-webkit-media-controls,
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(168, 85, 247, 0.4);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(168, 85, 247, 0.6);
+}
+video::-webkit-media-controls,
 video::-webkit-media-controls-enclosure,
-video::-webkit-media-controls-panel {
+video::-webkit-media-controls-panel,
+video::-webkit-media-controls-play-button,
+video::-webkit-media-controls-volume-slider,
+video::-webkit-media-controls-mute-button,
+video::-webkit-media-controls-timeline,
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display,
+video::-webkit-media-controls-fullscreen-button {
     display: none !important;
     -webkit-appearance: none;
 }
+
 video::-moz-media-controls {
     display: none !important;
 }
 
-@utility channel-card {
-    @apply bg-card-bg border border-card-border rounded-[14px] cursor-pointer;
-} */
+/* ✅ FIX: Fullscreen video must cover entire screen */
+:fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important; /* dynamic viewport height — accounts for mobile address bar */
+    background: black;
+}
 
+:fullscreen video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain; /* Default: keep aspect ratio with black bars */
+}
+
+/* ✅ Webkit/Safari prefix */
+:-webkit-full-screen {
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+}
+
+:-webkit-full-screen video {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* ✅ Add a CSS class users can toggle for "fill screen" mode */
+.video-fill video {
+    object-fit: cover !important;
+}
+
+/* ==== */
 @layer components {
     .player-wrapper {
         @apply bg-card-bg border border-card-border xl:rounded-[20px] md:rounded-[12px] rounded-[8px] overflow-hidden p-[5px];

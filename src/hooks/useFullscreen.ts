@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import type { RefObject } from 'react'; // ✅ type-only import
+import type { RefObject } from 'react';
 
-// ✅ Generic to accept any HTMLElement subtype + nullable ref
 export function useFullscreen<T extends HTMLElement>(ref: RefObject<T | null>) {
     const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -18,6 +17,15 @@ export function useFullscreen<T extends HTMLElement>(ref: RefObject<T | null>) {
         if (el && !document.fullscreenElement) {
             try {
                 await el.requestFullscreen();
+
+                // ✅ Auto-lock to landscape on mobile after entering fullscreen
+                try {
+                    if (screen.orientation && 'lock' in screen.orientation) {
+                        await screen.orientation.lock('landscape');
+                    }
+                } catch {
+                    // Desktop browsers throw — silently ignore
+                }
             } catch (e) {
                 console.warn('Fullscreen failed:', e);
             }
@@ -27,9 +35,13 @@ export function useFullscreen<T extends HTMLElement>(ref: RefObject<T | null>) {
     const exit = useCallback(async () => {
         if (document.fullscreenElement) {
             try {
+                // Unlock orientation before exiting
+                if (screen.orientation && 'unlock' in screen.orientation) {
+                    screen.orientation.unlock();
+                }
                 await document.exitFullscreen();
             } catch {
-                console.log('');
+                console.log('')
             }
         }
     }, []);

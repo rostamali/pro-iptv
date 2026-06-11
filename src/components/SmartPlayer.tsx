@@ -29,6 +29,12 @@ export default function SmartPlayer({
     const hlsRef = useRef<Hls | null>(null);
     const wasFullscreenRef = useRef(false);
 
+    const [fillMode, setFillMode] = useState<'contain' | 'cover'>('contain');
+
+    const toggleFillMode = () => {
+        setFillMode((m) => (m === 'contain' ? 'cover' : 'contain'));
+    };
+
     // ✅ Detect touch device once
     const isTouch = useMemo(() => isTouchDevice(), []);
 
@@ -237,10 +243,14 @@ export default function SmartPlayer({
                 ref={containerRef}
                 className={`relative bg-black ${
                     isFullscreen
-                        ? 'w-screen h-screen'
+                        ? 'fixed inset-0 w-screen h-screen' // ✅ fixed positioning + viewport units
                         : 'xl:rounded-[18px] md:rounded-[12px] rounded-[8px] overflow-hidden aspect-video'
                 }`}
-                // ✅ FIX: Only use mouseMove on non-touch devices
+                style={
+                    isFullscreen
+                        ? { height: '100dvh', width: '100vw' } // ✅ dvh handles mobile address bar
+                        : undefined
+                }
                 onMouseMove={
                     isFullscreen && !isTouch ? showControls : undefined
                 }
@@ -249,8 +259,13 @@ export default function SmartPlayer({
                     ref={videoRef}
                     autoPlay
                     playsInline
+                    webkit-playsinline="true"
+                    controls={false}
+                    controlsList="nodownload nofullscreen noremoteplayback"
+                    disablePictureInPicture
                     onClick={handleVideoClick}
                     className="w-full h-full cursor-pointer"
+                    style={{ objectFit: isFullscreen ? fillMode : 'cover' }}
                 />
 
                 {loading && (
@@ -289,6 +304,8 @@ export default function SmartPlayer({
                             hasNext={hasNext}
                             muted={muted}
                             volume={volume}
+                            fillMode={fillMode}
+                            toggleFillMode={toggleFillMode}
                         />
                     </div>
                 )}
@@ -307,6 +324,8 @@ export default function SmartPlayer({
                     hasNext={hasNext}
                     muted={muted}
                     volume={volume}
+                    fillMode={fillMode}
+                    toggleFillMode={toggleFillMode}
                 />
             )}
         </div>
