@@ -10,7 +10,7 @@ export const CHANNELS: Channel[] = [
         language: 'Bangla',
         isLive: true,
         source: {
-            url: 'https://flussonic.defineatoz.com/TSports2/tracks-v1a1/mono.m3u8?remote=103.179.128.90&token=db1894f1c260edabbc15f12ef4faab4ed31117ef-f2ed9b5021c95a34ebeb5e1386909c7b-1781394082-1781383282',
+            url: 'https://flussonic.defineatoz.com/TSports2/tracks-v1a1/mono.m3u8?remote=103.179.128.90&token=ec3329f0fed7f420a687bbb240823cb5cebf9b85-e7da673890d235415f17123c802615fa-1781403096-1781392296',
             quality: 'HD',
             label: 'HD',
         },
@@ -379,7 +379,7 @@ export const CHANNELS: Channel[] = [
         language: 'Bangla',
         isLive: true,
         source: {
-            url: 'https://flussonic.defineatoz.com/somoy1/tracks-v1a1/mono.m3u8?remote=103.179.128.90&token=52827d2d7a85b2e90d9935010b22d393dc049316-fde6d42c04ce1011a2ecbcb6500d23c9-1781394059-1781383259',
+            url: 'https://flussonic.defineatoz.com/somoy1/index.m3u8?token=9b2d067e833772b3957ae2899f9b616a677e9926-9cf4bdb423162f3b7798f8b21c560c61-1781403015-1781392215&remote=103.179.128.90',
             quality: 'HD',
         },
     },
