@@ -8,6 +8,7 @@ import { isTouchDevice } from '../utils/device';
 import { loadVolume, saveVolume, loadMuted, saveMuted } from '../utils/storage';
 import type { Channel } from '../types';
 import PlayerController from './PlayerController';
+import StreamError from './StreamError';
 
 interface Props {
     channel: Channel;
@@ -48,7 +49,7 @@ export default function SmartPlayer({
     const {
         visible: controlsVisible,
         show: showControls,
-        toggle: toggleControls, // ✅ NEW
+        toggle: toggleControls,
         lock,
         unlock,
     } = useAutoHideControls(3000);
@@ -56,9 +57,6 @@ export default function SmartPlayer({
     const { source, failed, markFailed, reset, hasWorkingSource } =
         usePlayChannel(channel.source);
 
-    // ... [keep all your existing useEffects unchanged] ...
-
-    // Track fullscreen state for safety net
     useEffect(() => {
         wasFullscreenRef.current = isFullscreen;
     }, [isFullscreen]);
@@ -199,43 +197,54 @@ export default function SmartPlayer({
         }
     };
 
-    if (!hasWorkingSource) {
-        return (
-            <div className="bg-black rounded-lg overflow-hidden">
-                <div className="aspect-video flex flex-col items-center justify-center text-white p-6">
-                    <div className="text-5xl mb-4">📡</div>
-                    <p className="text-xl mb-2">Stream Offline</p>
-                    <p className="text-sm text-gray-400 mb-4">
-                        {channel.name} ({source.label}) is currently unavailable
-                    </p>
-                    <div className="flex gap-2 flex-wrap justify-center">
-                        <button
-                            onClick={reset}
-                            className="px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition"
-                        >
-                            🔄 Retry
-                        </button>
-                        {hasNext && (
-                            <button
-                                onClick={onNextChannel}
-                                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition"
-                            >
-                                ⏭ Next Channel
-                            </button>
-                        )}
-                        {hasPrev && (
-                            <button
-                                onClick={onPrevChannel}
-                                className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition"
-                            >
-                                ⏮ Previous Channel
-                            </button>
-                        )}
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    // if (!hasWorkingSource) {
+    //     return (
+    //         <>
+    //             <StreamError
+    //                 channelName={''}
+    //                 channelLabel={''}
+    //                 onPrevChannel={onPrevChannel}
+    //                 onNextChannel={onNextChannel}
+    //                 reset={reset}
+    //                 hasPrev={hasPrev}
+    //                 hasNext={hasNext}
+    //             />
+    //             {/* <div className="bg-black rounded-lg overflow-hidden">
+    //             <div className="aspect-video flex flex-col items-center justify-center text-white p-6">
+    //                 <div className="text-5xl mb-4">📡</div>
+    //                 <p className="text-xl mb-2">Stream Offline</p>
+    //                 <p className="text-sm text-gray-400 mb-4">
+    //                     {channel.name} ({source.label}) is currently unavailable
+    //                 </p>
+    //                 <div className="flex gap-2 flex-wrap justify-center">
+    //                     <button
+    //                         onClick={reset}
+    //                         className="px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition"
+    //                     >
+    //                         🔄 Retry
+    //                     </button>
+    //                     {hasNext && (
+    //                         <button
+    //                             onClick={onNextChannel}
+    //                             className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition"
+    //                         >
+    //                             ⏭ Next Channel
+    //                         </button>
+    //                     )}
+    //                     {hasPrev && (
+    //                         <button
+    //                             onClick={onPrevChannel}
+    //                             className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition"
+    //                         >
+    //                             ⏮ Previous Channel
+    //                         </button>
+    //                     )}
+    //                 </div>
+    //             </div>
+    //         </div> */}
+    //         </>
+    //     );
+    // }
 
     return (
         <div className="player-wrapper">
@@ -274,12 +283,16 @@ export default function SmartPlayer({
                     }}
                 />
 
-                {loading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black pointer-events-none z-20">
+                {!hasWorkingSource && (
+                    <StreamError channelName={channel.name} />
+                )}
+
+                {hasWorkingSource && loading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-[#00000042] pointer-events-none z-20">
                         <div className="text-center">
                             <div className="animate-spin lg:h-[30px] lg:w-[30px] h-[25px] w-[25px] border-3 border-white border-t-gradient-primary rounded-full mx-auto mb-2" />
                             <p className="text-white uppercase font-heading text-[12px] font-normal tracking-wider">
-                                Connecting stream...
+                                Connecting {channel.name}...
                             </p>
                         </div>
                     </div>
@@ -287,10 +300,8 @@ export default function SmartPlayer({
 
                 {isFullscreen && (
                     <div
-                        // ✅ FIX: Only use mouse-based lock/unlock on desktop
                         onMouseEnter={!isTouch ? lock : undefined}
                         onMouseLeave={!isTouch ? unlock : undefined}
-                        // ✅ FIX: Stop propagation so tapping controls doesn't toggle visibility
                         onClick={(e) => e.stopPropagation()}
                         className={`player-controller__overlay transition-opacity duration-300 z-20 ${
                             controlsVisible
@@ -313,6 +324,8 @@ export default function SmartPlayer({
                             fillMode={fillMode}
                             toggleFillMode={toggleFillMode}
                             isFullscreen={isFullscreen}
+                            resetBtn={reset}
+                            hasWorkingSource={hasWorkingSource}
                         />
                     </div>
                 )}
@@ -334,6 +347,8 @@ export default function SmartPlayer({
                     fillMode={fillMode}
                     toggleFillMode={toggleFillMode}
                     isFullscreen={isFullscreen}
+                    resetBtn={reset}
+                    hasWorkingSource={hasWorkingSource}
                 />
             )}
         </div>

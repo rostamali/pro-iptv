@@ -15,6 +15,8 @@ type props = {
     fillMode: 'contain' | 'cover';
     toggleFillMode: () => void;
     isFullscreen: boolean;
+    resetBtn: () => void;
+    hasWorkingSource: boolean;
 };
 export default function PlayerController({
     toggleMute,
@@ -31,6 +33,8 @@ export default function PlayerController({
     toggleFillMode,
     fillMode,
     isFullscreen,
+    resetBtn,
+    hasWorkingSource,
 }: props) {
     return (
         <>
@@ -161,22 +165,46 @@ export default function PlayerController({
                         </svg>
                     </button>
 
-                    <button
-                        onClick={togglePlayPause}
-                        className="player-controller-play__btn"
-                    >
-                        {isPlaying ? (
+                    {hasWorkingSource ? (
+                        <button
+                            onClick={togglePlayPause}
+                            className="player-controller-play__btn"
+                        >
+                            {isPlaying ? (
+                                <svg
+                                    className="md:w-6 md:h-6 w-4.5 h-4.5"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path d="M6 4h4v16H6zM14 4h4v16h-4z" />
+                                </svg>
+                            ) : (
+                                <div className="play-icon"></div>
+                            )}
+                        </button>
+                    ) : (
+                        <button
+                            onClick={resetBtn}
+                            className="player-controller-play__btn"
+                        >
                             <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlnsXlink="http://www.w3.org/1999/xlink"
+                                version="1.1"
+                                viewBox="0 0 100 100"
+                                // style={{ enableBackground: 'new 0 0 512 512' }}
+                                xmlSpace="preserve"
                                 className="md:w-6 md:h-6 w-4.5 h-4.5"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
                             >
-                                <path d="M6 4h4v16H6zM14 4h4v16h-4z" />
+                                <g>
+                                    <path
+                                        d="M50 12c9.348 0 18.139 3.37 25.08 9.5h-6.067a4.75 4.75 0 0 0 0 9.5H83.25A4.75 4.75 0 0 0 88 26.25V12.013a4.75 4.75 0 0 0-9.5 0v.063C70.317 5.895 60.437 2.5 50 2.5 25.6 2.5 5.444 20.985 2.795 44.688 2.479 47.516 4.672 50 7.517 50h.002c2.436 0 4.447-1.849 4.72-4.27C14.367 26.78 30.492 12 50 12zM92.481 50c-2.436 0-4.447 1.849-4.72 4.27C85.633 73.22 69.508 88 50 88c-9.323 0-18.139-3.37-25.08-9.5h6.067a4.75 4.75 0 1 0 0-9.5H16.75A4.75 4.75 0 0 0 12 73.75v14.263a4.75 4.75 0 0 0 9.5 0v-.064C29.683 94.131 39.563 97.5 50 97.5c24.4 0 44.556-18.485 47.205-42.188.316-2.828-1.877-5.312-4.722-5.312z"
+                                        fill="currentColor"
+                                    />
+                                </g>
                             </svg>
-                        ) : (
-                            <div className="play-icon"></div>
-                        )}
-                    </button>
+                        </button>
+                    )}
 
                     <button
                         onClick={onNextChannel}
@@ -202,7 +230,6 @@ export default function PlayerController({
                 </div>
 
                 <div className="md:order-3 order-2 flex items-center justify-end gap-2">
-                    {/* ✅ NEW: Fill mode toggle — only show in fullscreen */}
                     {isFullscreen && (
                         <button
                             onClick={toggleFillMode}
@@ -229,7 +256,6 @@ export default function PlayerController({
                                     />
                                 </svg>
                             ) : (
-                                // "Fit to screen" icon
                                 <svg
                                     className="w-[15px] h-[15px]"
                                     fill="none"
@@ -253,7 +279,6 @@ export default function PlayerController({
                         title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
                     >
                         {isFullscreen ? (
-                            // Exit fullscreen icon
                             <svg
                                 fill="none"
                                 height="15"

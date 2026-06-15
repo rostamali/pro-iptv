@@ -43,9 +43,9 @@ export const CHANNELS: Channel[] = [
         },
     },
     {
-        id: 'somoy-tv',
-        name: 'Somoy TV',
-        logo: '/channel-logos/somoy-tv.svg',
+        id: 'channel-1',
+        name: 'Channel 1',
+        logo: '/channel-logos/channel-1.png',
         categories: ['news'],
         country: 'BD',
         language: 'Bangla',
@@ -66,19 +66,6 @@ export const CHANNELS: Channel[] = [
         source: {
             url: 'https://live20.bozztv.com/giatvplayout7/giatv-208314/tracks-v1a1/mono.ts.m3u8',
             quality: 'HD',
-        },
-    },
-    {
-        id: 'btv-hd',
-        name: 'BTV HD',
-        logo: '/channel-logos/btv.svg',
-        categories: ['general'],
-        country: 'BD',
-        language: 'Bangla',
-        isLive: true,
-        source: {
-            url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8',
-            quality: 'SD',
         },
     },
     {
@@ -215,19 +202,6 @@ export const CHANNELS: Channel[] = [
         },
     },
     {
-        id: 'btv-world',
-        name: 'BTV World',
-        logo: '/channel-logos/btv.svg',
-        categories: ['general'],
-        country: 'BD',
-        language: 'Bangla',
-        isLive: true,
-        source: {
-            url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8',
-            quality: 'HD',
-        },
-    },
-    {
         id: 'jamuna-tv',
         name: 'Jamuna TV',
         logo: '/channel-logos/jamuna-tv.svg',
@@ -347,7 +321,7 @@ export const CHANNELS: Channel[] = [
     {
         id: 'now-tv-tr',
         name: 'Now TV',
-        logo: '',
+        logo: '/channel-logos/now-tv.svg',
         categories: ['movies'],
         country: 'TR',
         language: 'Turkish',
@@ -373,10 +347,10 @@ export const CHANNELS: Channel[] = [
     {
         id: '&tv-hd',
         name: '&TV HD',
-        logo: '/channel-logos/somoy-tv.svg',
-        categories: ['worldcup'],
-        country: 'BD',
-        language: 'Bangla',
+        logo: '/channel-logos/and-tv.webp',
+        categories: ['entertainment'],
+        country: 'IN',
+        language: 'Hindi',
         isLive: true,
         source: {
             url: 'https://3f56f997.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9BbmRUVl9ITFM/playlist.m3u8',
@@ -386,10 +360,10 @@ export const CHANNELS: Channel[] = [
     {
         id: 'd-sports',
         name: 'D Sports',
-        logo: '/channel-logos/somoy-tv.svg',
+        logo: '/channel-logos/dsports.png',
         categories: ['worldcup'],
-        country: 'BD',
-        language: 'Bangla',
+        country: 'USA',
+        language: 'English',
         isLive: true,
         source: {
             url: 'https://cors-proxy.cooks.fyi/http://147.135.114.221:8001/play/a00m/index.m3u8',
@@ -397,12 +371,12 @@ export const CHANNELS: Channel[] = [
         },
     },
     {
-        id: 'sports-digital-football',
-        name: 'Fifa World Cup',
-        logo: '/channel-logos/somoy-tv.svg',
+        id: 'fubo-sports',
+        name: 'Fubo',
+        logo: '/channel-logos/fubo.svg',
         categories: ['worldcup'],
-        country: 'BD',
-        language: 'Bangla',
+        country: 'USA',
+        language: 'English',
         isLive: true,
         source: {
             url: 'https://aegis-cloudfront-1.tubi.video/c2ac89da-5c69-439e-b85d-d87de0548b54/playlist.m3u8',
