@@ -50,7 +50,7 @@ export default function ChannelCard({ channel, onClick, isActive }: Props) {
                     {channel.name}
                 </h3>
                 <p className="text-[12px] font-light text-gray-300 mt-1">
-                    {channel.country} · {channel.language}
+                    {channel.country} · {channel.source.quality}
                 </p>
             </div>
         </button>
