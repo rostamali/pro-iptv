@@ -286,7 +286,7 @@ export const CHANNELS: Channel[] = [
         country: 'USA',
         isLive: true,
         source: {
-            url: 'https://stream.ottplus.bd/live/discovery_sd_abr/live/discovery_sd/chunks.m3u8',
+            url: 'https://stream.ottplus.bd/live/discovery_hd_abr/live/discovery_hd/chunks.m3u8',
             quality: 'HD',
         },
     },
@@ -314,6 +314,18 @@ export const CHANNELS: Channel[] = [
             url: 'https://a62dad94.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0ZJRkFQbHVzRW5nbGlzaF9ITFM/playlist.m3u8',
             quality: 'HD',
             label: 'Fifa +',
+        },
+    },
+    {
+        id: 'sony-aath',
+        name: 'Sony Aath',
+        logo: '/channel-logos/sony-aath.png',
+        categories: ['entertainment'],
+        country: 'USA',
+        isLive: true,
+        source: {
+            url: 'https://stream.ottplus.bd/live/sony_aath_abr/live/sony_aath_720/chunks.m3u8',
+            quality: 'HD',
         },
     },
     {
@@ -377,7 +389,18 @@ export const CHANNELS: Channel[] = [
             quality: 'HD',
         },
     },
-
+    {
+        id: '&tv-hd-ch',
+        name: '&TV Hindi',
+        logo: '/channel-logos/and-tv.webp',
+        categories: ['entertainment'],
+        country: 'IN',
+        isLive: true,
+        source: {
+            url: 'https://stream.ottplus.bd/live/and_tv_hd_abr/live/and_tv_hd_720/chunks.m3u8',
+            quality: 'HD',
+        },
+    },
     {
         id: '&tv-hd',
         name: '&TV HD',
