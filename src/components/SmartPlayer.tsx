@@ -156,7 +156,7 @@ export default function SmartPlayer({
             console.log('[Player] Using HLS.js');
 
             const hls = new Hls({
-                // ✅ TV-friendly config when on Smart TV
+                // Your existing config...
                 manifestLoadingTimeOut: isTV ? 30000 : 10000,
                 manifestLoadingMaxRetry: isTV ? 5 : 2,
                 levelLoadingTimeOut: isTV ? 30000 : 10000,
@@ -164,19 +164,37 @@ export default function SmartPlayer({
                 fragLoadingTimeOut: isTV ? 30000 : 10000,
                 fragLoadingMaxRetry: isTV ? 6 : 3,
                 lowLatencyMode: !isTV,
-                enableWorker: !isTV, // Some Tizen versions choke on workers
-
-                // Buffer settings tuned for TV
+                enableWorker: !isTV,
                 maxBufferLength: isTV ? 60 : 30,
                 maxMaxBufferLength: isTV ? 120 : 60,
                 maxBufferSize: isTV ? 30 * 1000 * 1000 : 60 * 1000 * 1000,
-
-                // Robustness
                 startFragPrefetch: false,
                 testBandwidth: false,
-
-                // Better error recovery
                 nudgeMaxRetry: isTV ? 10 : 3,
+                keyLoadPolicy: {
+                    default: {
+                        maxTimeToFirstByteMs: 8000,
+                        maxLoadTimeMs: 20000,
+                        timeoutRetry: {
+                            maxNumRetry: 4,
+                            retryDelayMs: 1000,
+                            maxRetryDelayMs: 8000,
+                            backoff: 'linear',
+                        },
+                        errorRetry: {
+                            maxNumRetry: 4,
+                            retryDelayMs: 1000,
+                            maxRetryDelayMs: 8000,
+                            backoff: 'linear',
+                        },
+                    },
+                },
+                xhrSetup: (xhr, url) => {
+                    // ✅ Ensure XHR uses text/blob response type appropriately
+                    if (url.includes('.key')) {
+                        xhr.responseType = 'arraybuffer'; // keys are binary
+                    }
+                },
             });
 
             hls.loadSource(streamUrl);
