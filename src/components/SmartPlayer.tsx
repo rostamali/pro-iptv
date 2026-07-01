@@ -18,6 +18,25 @@ interface Props {
     hasNext: boolean;
 }
 
+// ✅ Detect Samsung/LG/other Smart TVs once
+const isSmartTV = (): boolean => {
+    if (typeof navigator === 'undefined') return false;
+    const ua = navigator.userAgent.toLowerCase();
+    return (
+        ua.includes('tizen') ||
+        ua.includes('smart-tv') ||
+        ua.includes('smarttv') ||
+        ua.includes('webos') ||
+        ua.includes('web0s') ||
+        ua.includes('netcast') ||
+        ua.includes('hbbtv') ||
+        ua.includes('viera') ||
+        ua.includes('appletv') ||
+        // Samsung TVs often have "SamsungBrowser" in UA
+        ua.includes('samsungbrowser')
+    );
+};
+
 export default function SmartPlayer({
     channel,
     onPrevChannel,
@@ -30,14 +49,17 @@ export default function SmartPlayer({
     const hlsRef = useRef<Hls | null>(null);
     const wasFullscreenRef = useRef(false);
 
-    const [fillMode, setFillMode] = useState<'contain' | 'cover'>('contain');
+    // ✅ Track how many recovery attempts have been made per source
+    const nativeFailedRef = useRef(false);
+    const recoveryAttemptsRef = useRef(0);
 
+    const [fillMode, setFillMode] = useState<'contain' | 'cover'>('contain');
     const toggleFillMode = () => {
         setFillMode((m) => (m === 'contain' ? 'cover' : 'contain'));
     };
 
-    // ✅ Detect touch device once
     const isTouch = useMemo(() => isTouchDevice(), []);
+    const isTV = useMemo(() => isSmartTV(), []);
 
     const [loading, setLoading] = useState(true);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -61,10 +83,14 @@ export default function SmartPlayer({
         wasFullscreenRef.current = isFullscreen;
     }, [isFullscreen]);
 
+    // Reset recovery state when channel changes
     useEffect(() => {
+        nativeFailedRef.current = false;
+        recoveryAttemptsRef.current = 0;
         reset();
     }, [channel.id, reset]);
 
+    // Re-enter fullscreen after channel change if user was fullscreen
     useEffect(() => {
         if (
             wasFullscreenRef.current &&
@@ -80,7 +106,7 @@ export default function SmartPlayer({
         }
     }, [channel.id]);
 
-    // ... [stream loading effect unchanged] ...
+    // ✅ MAIN STREAM LOADING — Samsung TV compatible
     useEffect(() => {
         const video = videoRef.current;
         if (!video || failed) return;
@@ -111,13 +137,46 @@ export default function SmartPlayer({
         video.addEventListener('canplay', onCanPlay);
         video.addEventListener('volumechange', onVolumeChange);
 
-        if (Hls.isSupported()) {
+        // ✅ SAMSUNG TV FLOW: Try native HLS FIRST, then hls.js as fallback
+        // ✅ REGULAR BROWSER FLOW: Use hls.js if supported, else native
+        const canPlayNativeHls =
+            video.canPlayType('application/vnd.apple.mpegurl') !== '' ||
+            video.canPlayType('application/x-mpegURL') !== '';
+
+        const attachHlsJs = () => {
+            if (cancelled) return;
+            if (!Hls.isSupported()) {
+                console.warn(
+                    '[Player] HLS.js not supported, falling back to native',
+                );
+                video.src = streamUrl;
+                return;
+            }
+
+            console.log('[Player] Using HLS.js');
+
             const hls = new Hls({
-                manifestLoadingTimeOut: 10000,
-                manifestLoadingMaxRetry: 1,
-                levelLoadingTimeOut: 10000,
-                fragLoadingTimeOut: 10000,
-                lowLatencyMode: true,
+                // ✅ TV-friendly config when on Smart TV
+                manifestLoadingTimeOut: isTV ? 30000 : 10000,
+                manifestLoadingMaxRetry: isTV ? 5 : 2,
+                levelLoadingTimeOut: isTV ? 30000 : 10000,
+                levelLoadingMaxRetry: isTV ? 5 : 2,
+                fragLoadingTimeOut: isTV ? 30000 : 10000,
+                fragLoadingMaxRetry: isTV ? 6 : 3,
+                lowLatencyMode: !isTV,
+                enableWorker: !isTV, // Some Tizen versions choke on workers
+
+                // Buffer settings tuned for TV
+                maxBufferLength: isTV ? 60 : 30,
+                maxMaxBufferLength: isTV ? 120 : 60,
+                maxBufferSize: isTV ? 30 * 1000 * 1000 : 60 * 1000 * 1000,
+
+                // Robustness
+                startFragPrefetch: false,
+                testBandwidth: false,
+
+                // Better error recovery
+                nudgeMaxRetry: isTV ? 10 : 3,
             });
 
             hls.loadSource(streamUrl);
@@ -132,14 +191,73 @@ export default function SmartPlayer({
 
             hls.on(Hls.Events.ERROR, (_, data) => {
                 if (cancelled) return;
+
+                // ✅ Try recoverable errors first (Samsung TV benefits from retries)
                 if (data.fatal) {
-                    console.warn(`[Player] Fatal error on ${channel.name}`);
+                    if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                        if (recoveryAttemptsRef.current < 3) {
+                            recoveryAttemptsRef.current++;
+                            console.warn(
+                                `[Player] Network error, retry ${recoveryAttemptsRef.current}/3`,
+                            );
+                            hls.startLoad();
+                            return;
+                        }
+                    } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+                        if (recoveryAttemptsRef.current < 3) {
+                            recoveryAttemptsRef.current++;
+                            console.warn(
+                                `[Player] Media error, recovering ${recoveryAttemptsRef.current}/3`,
+                            );
+                            hls.recoverMediaError();
+                            return;
+                        }
+                    }
+
+                    console.warn(
+                        `[Player] Fatal error on ${channel.name}:`,
+                        data.details,
+                    );
                     markFailed();
                 }
             });
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        };
+
+        const attachNativeHls = () => {
+            if (cancelled) return;
+            console.log('[Player] Using native HLS');
             video.src = streamUrl;
             if (oldHls) oldHls.destroy();
+
+            // If native fails on TV, fallback to hls.js
+            const onNativeError = () => {
+                if (cancelled || nativeFailedRef.current) return;
+                nativeFailedRef.current = true;
+                console.warn(
+                    '[Player] Native HLS failed, falling back to hls.js',
+                );
+                video.removeEventListener('error', onNativeError);
+                // Small delay for cleanup
+                window.setTimeout(() => {
+                    if (!cancelled) attachHlsJs();
+                }, 200);
+            };
+            video.addEventListener('error', onNativeError);
+
+            video.play().catch(() => {});
+        };
+
+        // ✅ Choose loading strategy based on device
+        if (isTV && canPlayNativeHls) {
+            // Samsung/LG TV: native player is more reliable, try it first
+            attachNativeHls();
+        } else if (Hls.isSupported()) {
+            attachHlsJs();
+        } else if (canPlayNativeHls) {
+            attachNativeHls();
+        } else {
+            console.error('[Player] No HLS support available');
+            markFailed();
         }
 
         return () => {
@@ -151,7 +269,7 @@ export default function SmartPlayer({
             video.removeEventListener('canplay', onCanPlay);
             video.removeEventListener('volumechange', onVolumeChange);
         };
-    }, [source, failed, markFailed, channel.name]);
+    }, [source, failed, markFailed, channel.name, isTV]);
 
     useEffect(() => {
         return () => {
@@ -159,6 +277,7 @@ export default function SmartPlayer({
         };
     }, []);
 
+    // Sync volume/muted to video
     useEffect(() => {
         const video = videoRef.current;
         if (!video) return;
@@ -182,69 +301,17 @@ export default function SmartPlayer({
 
     const toggleMute = () => setMuted((m) => !m);
 
-    // ✅ FIX: Different behavior for touch vs mouse devices
     const handleVideoClick = () => {
         if (isFullscreen) {
             if (isTouch) {
-                // Touch: tap toggles controls visibility
                 toggleControls();
             } else {
-                // Desktop: click shows controls (auto-hides after 3s)
                 showControls();
             }
         } else {
             togglePlayPause();
         }
     };
-
-    // if (!hasWorkingSource) {
-    //     return (
-    //         <>
-    //             <StreamError
-    //                 channelName={''}
-    //                 channelLabel={''}
-    //                 onPrevChannel={onPrevChannel}
-    //                 onNextChannel={onNextChannel}
-    //                 reset={reset}
-    //                 hasPrev={hasPrev}
-    //                 hasNext={hasNext}
-    //             />
-    //             {/* <div className="bg-black rounded-lg overflow-hidden">
-    //             <div className="aspect-video flex flex-col items-center justify-center text-white p-6">
-    //                 <div className="text-5xl mb-4">📡</div>
-    //                 <p className="text-xl mb-2">Stream Offline</p>
-    //                 <p className="text-sm text-gray-400 mb-4">
-    //                     {channel.name} ({source.label}) is currently unavailable
-    //                 </p>
-    //                 <div className="flex gap-2 flex-wrap justify-center">
-    //                     <button
-    //                         onClick={reset}
-    //                         className="px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition"
-    //                     >
-    //                         🔄 Retry
-    //                     </button>
-    //                     {hasNext && (
-    //                         <button
-    //                             onClick={onNextChannel}
-    //                             className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition"
-    //                         >
-    //                             ⏭ Next Channel
-    //                         </button>
-    //                     )}
-    //                     {hasPrev && (
-    //                         <button
-    //                             onClick={onPrevChannel}
-    //                             className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition"
-    //                         >
-    //                             ⏮ Previous Channel
-    //                         </button>
-    //                     )}
-    //                 </div>
-    //             </div>
-    //         </div> */}
-    //         </>
-    //     );
-    // }
 
     return (
         <div className="player-wrapper">
@@ -273,9 +340,12 @@ export default function SmartPlayer({
                     autoPlay
                     playsInline
                     webkit-playsinline="true"
+                    x5-playsinline="true"
                     controls={false}
                     controlsList="nodownload nofullscreen noremoteplayback"
                     disablePictureInPicture
+                    crossOrigin="anonymous"
+                    preload="auto"
                     onClick={handleVideoClick}
                     className="w-full h-full cursor-pointer"
                     style={{
