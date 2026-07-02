@@ -114,12 +114,12 @@ export default function SmartPlayer({
         let cancelled = false;
         const oldHls = hlsRef.current;
 
-        const streamUrl = proxyStream(
-            source.url,
-            channel.proxy === true,
-            source.userAgent,
-            source.referer,
-        );
+        const streamUrl = proxyStream({
+            url: source.url,
+            // channel.proxy === true,
+            // source.userAgent,
+            // source.referer,
+        });
 
         const onPlay = () => setIsPlaying(true);
         const onPause = () => setIsPlaying(false);

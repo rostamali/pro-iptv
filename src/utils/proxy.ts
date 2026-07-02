@@ -23,7 +23,9 @@
 //     if (ref) params.set('ref', ref);
 //     return `${PROXY_URL}/?${params}`;
 // }
-
-export function proxyStream(url: string): string {
+type ProxyStream = {
+    url: string;
+};
+export function proxyStream({ url }: ProxyStream): string {
     return url;
 }
