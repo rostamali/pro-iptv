@@ -338,6 +338,7 @@ export const CHANNELS: Channel[] = [
         categories: ['entertainment'],
         country: 'USA',
         isLive: true,
+        proxy: true,
         source: {
             url: 'https://stream.ottplus.bd/live/sony_aath_abr/live/sony_aath_720/chunks.m3u8',
             quality: 'HD',
