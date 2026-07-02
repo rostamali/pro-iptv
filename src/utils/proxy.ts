@@ -1,31 +1,18 @@
-// const PROXY_URL = import.meta.env.PROD
-//     ? 'https://ros-tv.rostamsardar449.workers.dev' // ✅ Your worker
-//     : '';
+const PROXY_URL = 'https://ros-tv.rostamsardar449.workers.dev';
 
-// /**
-//  * Route a stream URL through the Cloudflare Worker proxy.
-//  * @param url - The original stream URL
-//  * @param useProxy - Whether to proxy this stream (default: false)
-//  * @param ua - Optional custom User-Agent
-//  * @param ref - Optional custom Referer
-//  */
-// export function proxyStream(
-//     url: string,
-//     useProxy: boolean = false, // ✅ NEW — opt-in per channel
-//     ua?: string,
-//     ref?: string,
-// ): string {
-//     // ✅ If proxy is not requested OR no proxy URL configured, return direct URL
-//     if (!useProxy || !PROXY_URL) return url;
-
-//     const params = new URLSearchParams({ url });
-//     if (ua) params.set('ua', ua);
-//     if (ref) params.set('ref', ref);
-//     return `${PROXY_URL}/?${params}`;
-// }
 type ProxyStream = {
     url: string;
+    useProxy?: boolean;
 };
-export function proxyStream({ url }: ProxyStream): string {
-    return url;
+export function proxyStream({ url, useProxy = false }: ProxyStream): string {
+    if (!useProxy) return url;
+
+    const params = new URLSearchParams({ url });
+    return `${PROXY_URL}/?${params}`;
 }
+// type ProxyStream = {
+//     url: string;
+// };
+// export function proxyStream({ url }: ProxyStream): string {
+//     return url;
+// }
