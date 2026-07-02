@@ -293,6 +293,19 @@ export const CHANNELS: Channel[] = [
         },
     },
     {
+        id: 'discovery-hindi',
+        name: 'Discovery',
+        logo: '/channel-logos/discovery.svg',
+        categories: ['documentary'],
+        country: 'IN',
+        isLive: true,
+        proxy: true,
+        source: {
+            url: 'https://stream.ottplus.bd/live/discovery_sd_abr/live/discovery_sd/chunks.m3u8',
+            quality: 'HD',
+        },
+    },
+    {
         id: 'cazetv',
         name: 'CAZE TV',
         logo: '/channel-logos/caze-tv.svg',
