@@ -116,6 +116,7 @@ export default function SmartPlayer({
 
         const streamUrl = proxyStream(
             source.url,
+            channel.proxy === true,
             source.userAgent,
             source.referer,
         );

@@ -16,6 +16,7 @@ export interface Channel {
     source: StreamSource;
     isLive?: boolean;
     isPremium?: boolean;
+    proxy?: boolean;
     tags?: string[];
 }
 

@@ -8,6 +8,7 @@ export const CHANNELS: Channel[] = [
         categories: ['worldcup'],
         country: 'BD',
         isLive: true,
+        proxy: true,
         source: {
             url: 'https://live.thebosstv.com:30443/dwlive/Somoy-TV/chunks.m3u8',
             quality: 'HD',
@@ -285,6 +286,7 @@ export const CHANNELS: Channel[] = [
         categories: ['documentary'],
         country: 'USA',
         isLive: true,
+        proxy: true,
         source: {
             url: 'https://stream.ottplus.bd/live/discovery_hd_abr/live/discovery_hd/chunks.m3u8',
             quality: 'HD',
@@ -396,6 +398,7 @@ export const CHANNELS: Channel[] = [
         categories: ['entertainment'],
         country: 'IN',
         isLive: true,
+        proxy: true,
         source: {
             url: 'https://stream.ottplus.bd/live/and_tv_hd_abr/live/and_tv_hd_720/chunks.m3u8',
             quality: 'HD',
